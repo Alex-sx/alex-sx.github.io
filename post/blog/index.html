@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang='en'><head>
+  <title>搜索基础 - My New Hugo Site</title>
+  <link rel='canonical' href='https://alex-sx.github.io/post/blog/' />
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta name='description' content='' />
+  <meta name='theme-color' content='black' />
+  
+
+  <meta name="generator" content="Hugo 0.70.0" />
+
+  
+
+
+
+
+
+<link rel="stylesheet" href="https://alex-sx.github.io/sass/style.min.8a1658d134a4b54730b66789206b2cf14c1b006a6de3f3fde6302f925b6e01f5.css" integrity="sha256-ihZY0TSktUcwtmeJIGss8UwbAGpt4/P95jAvkltuAfU=" media="screen">
+<link rel="stylesheet" href="https://alex-sx.github.io/syntax.min.css" integrity="" media="screen">
+
+  <meta property="og:title" content="搜索基础" />
+<meta property="og:description" content="算法竞赛专题解析&ndash;
+搜索进阶(1)&ndash;搜索基础
+罗勇军 2020.3.2
+本系列是这本书的扩展资料：《算法竞赛入门到进阶》（京东，当当）.罗勇军、郭卫斌. 清华大学出版社 本文 web 地址：https://blog.csdn.net/weixin_43914593
+PDF 下载地址：https://github.com/luoyongjun999/code 其中的补充资料 如有建议，请联系：（1）QQ 群，567554289；（2）作者 QQ，15512356
+《算法竞赛入门到进阶》的第 4 章“搜索技术”，讲解了递归、BFS、DFS 的原理，以及 双向广搜、A算法、剪枝、迭代加深搜索、IDA的经典例题，适合入门搜索算法。（第 4 章“搜
+索技术”电子版下载：https://github.com/luoyongjun999/code	其中的补充资料）
+本文将分几篇专题介绍搜索扩展内容、讲解更多习题，便于读者深入掌握搜索技术。
+第	1 篇，搜索基础。
+第	2 篇，剪枝。
+第	3 篇～第 5 篇，记忆化搜索、双向广搜、迭代加深、A*搜索等。 本文是第 1 篇。
+ 目录  1 搜索简介&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip; 1
+2 基本搜索算法&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 1
+3 BFS 的性质和代码实现&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 2
+4 DFS 的常见操作和代码实现&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.. 4
+4.1  DFS 的常见操作&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 4
+4.2  DFS 代码框架&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.. 9
+5 BFS 和 DFS 的复杂度&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://alex-sx.github.io/post/blog/" />
+<meta property="article:published_time" content="2020-05-07T10:06:16+08:00" />
+<meta property="article:modified_time" content="2020-05-07T10:06:16+08:00" />
+
+  <meta itemprop="name" content="搜索基础">
+<meta itemprop="description" content="算法竞赛专题解析&ndash;
+搜索进阶(1)&ndash;搜索基础
+罗勇军 2020.3.2
+本系列是这本书的扩展资料：《算法竞赛入门到进阶》（京东，当当）.罗勇军、郭卫斌. 清华大学出版社 本文 web 地址：https://blog.csdn.net/weixin_43914593
+PDF 下载地址：https://github.com/luoyongjun999/code 其中的补充资料 如有建议，请联系：（1）QQ 群，567554289；（2）作者 QQ，15512356
+《算法竞赛入门到进阶》的第 4 章“搜索技术”，讲解了递归、BFS、DFS 的原理，以及 双向广搜、A算法、剪枝、迭代加深搜索、IDA的经典例题，适合入门搜索算法。（第 4 章“搜
+索技术”电子版下载：https://github.com/luoyongjun999/code	其中的补充资料）
+本文将分几篇专题介绍搜索扩展内容、讲解更多习题，便于读者深入掌握搜索技术。
+第	1 篇，搜索基础。
+第	2 篇，剪枝。
+第	3 篇～第 5 篇，记忆化搜索、双向广搜、迭代加深、A*搜索等。 本文是第 1 篇。
+ 目录  1 搜索简介&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip; 1
+2 基本搜索算法&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 1
+3 BFS 的性质和代码实现&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 2
+4 DFS 的常见操作和代码实现&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.. 4
+4.1  DFS 的常见操作&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 4
+4.2  DFS 代码框架&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.. 9
+5 BFS 和 DFS 的复杂度&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.">
+<meta itemprop="datePublished" content="2020-05-07T10:06:16&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-07T10:06:16&#43;08:00" />
+<meta itemprop="wordCount" content="1443">
+
+
+
+<meta itemprop="keywords" content="" />
+</head>
+<body>
+
+  <header style="background-image:linear-gradient(
+      rgba(0,0,0,0.4),rgba(0,0,0,0.4)
+    ),url(&#39;https://alex-sx.github.io/images/default-sidebar.jpg&#39;)">
+
+  <div class="intro">
+    <div class="logo-container">
+      <a href="/">
+        <img src='https://alex-sx.github.io/images/edna-west.jpg' alt="Profile Tags" class="rounded-logo">
+      </a>
+    </div>
+    <h2>Welcome, I'm John Doe</h2>
+    <h3>This is my personal website</h3>
+    <div class="menu">
+      
+
+      
+    </div>
+
+  </div>
+
+  <div class="socials">
+      
+  </div>
+
+</header>
+
+  <div class="content-wrapper">
+    
+    <main id="content" class="post">
+
+<h1>搜索基础</h1>
+<div class="reading-time">
+  <div class="icon">
+  <svg width="18px" height="18px" viewBox="0 0 115 115" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img">
+  
+  <path d="M57.5 11C29.05 11 6 34.05 6 62.5S29.05 114 57.5 114 109 90.95 109 62.5 85.95 11 57.5 11zm0 93.032c-22.947 0-41.532-18.585-41.532-41.532 0-22.947 18.585-41.532 41.532-41.532 22.947 0 41.532 18.585 41.532 41.532 0 22.947-18.585 41.532-41.532 41.532zm12.833-21.68L52.703 69.54a2.508 2.508 0 0 1-1.018-2.015V33.427a2.5 2.5 0 0 1 2.492-2.492h6.646a2.5 2.5 0 0 1 2.492 2.492v29.426l13.871 10.092c1.122.81 1.35 2.368.54 3.49l-3.904 5.377a2.51 2.51 0 0 1-3.489.54z"/>
+  
+  </svg>
+</div>
+
+  <span>7 minutes</span>
+</div>
+
+<div class="published-date">
+  <div class="icon">
+  <svg width="18px" height="18px" viewBox="0 0 115 115" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img">
+  
+  <path d="M77.577 51.23a1.807 1.807 0 0 0-2.2.342l-27.562 27.79a1.807 1.807 0 0 1-2.2.342l-14.008-9.702a1.807 1.807 0 0 0-2.2.342l-1.952 1.968c-.287.22-.456.568-.455.936.001.37.172.716.46.934L45.637 86.77a1.807 1.807 0 0 0 2.2-.342l31.709-31.97c.287-.22.456-.567.455-.936a1.175 1.175 0 0 0-.46-.933l-1.963-1.36z"/><path d="M97.304 20H80.512c-.041.34-.063.683-.064 1.026a5.986 5.986 0 0 0 1.256 4.1c.054.003.103.02.157.025a4.881 4.881 0 0 1 1.865-.025c3.05.562 4.984 3.907 4.32 7.47-.666 3.563-3.678 5.996-6.728 5.433a4.932 4.932 0 0 1-2.437-1.258c-6.018-1.378-10.445-7.795-10.445-15.745 0-.347.023-.685.04-1.026H34.579c-.041.34-.063.683-.064 1.026a5.986 5.986 0 0 0 1.256 4.1c.054.003.103.02.157.025a4.881 4.881 0 0 1 1.865-.025c3.05.562 4.984 3.907 4.32 7.47-.666 3.563-3.678 5.996-6.728 5.433a4.932 4.932 0 0 1-2.437-1.258c-6.018-1.378-10.445-7.795-10.445-15.745 0-.22.019-.434.025-.652a9.788 9.788 0 0 0-5.697 4.471 9.683 9.683 0 0 0-2.65 4.764L1.158 92.871c-.965 4.689 2.6 8.503 7.948 8.503h6.334v2.673c-.077 5.41 4.263 9.861 9.705 9.953h72.16c5.438-.095 9.774-4.546 9.694-9.953V29.953c.08-5.407-4.256-9.858-9.695-9.953zM10.078 96.653c-2.378 0-3.964-1.697-3.535-3.782L16.637 43.84h80.787L87.331 92.871a5.254 5.254 0 0 1-5.091 3.782H10.078zm91.535 7.394c.036 2.403-1.891 4.382-4.308 4.424h-72.16c-2.42-.04-4.352-2.018-4.32-4.424v-2.673h60.443c5.348 0 10.484-3.814 11.449-8.503l8.897-43.215v54.391z"/><path d="M34.814 33c1.243 0 2.251-1.057 2.251-2.36 0-1.305-1.008-2.362-2.25-2.362-2.04 0-4.313-3.194-4.313-7.778s2.272-7.778 4.312-7.778c1.227 0 2.536 1.163 3.386 3.084H43C41.716 11.19 38.578 8 34.814 8 29.871 8 26 13.49 26 20.5c0 7.009 3.871 12.5 8.814 12.5z"/>
+  
+  </svg>
+</div>
+
+  <span>May 7, 2020</span>
+</div>
+
+<p>算法竞赛专题解析&ndash;</p>
+<p>搜索进阶(1)&ndash;搜索基础</p>
+<p>罗勇军 2020.3.2</p>
+<p>本系列是这本书的扩展资料：《算法竞赛入门到进阶》（京东，当当）.罗勇军、郭卫斌. 清华大学出版社 本文 web 地址：https://blog.csdn.net/weixin_43914593</p>
+<p>PDF 下载地址：https://github.com/luoyongjun999/code 其中的补充资料 如有建议，请联系：（1）QQ 群，567554289；（2）作者 QQ，15512356</p>
+<p>《算法竞赛入门到进阶》的第 4 章“搜索技术”，讲解了递归、BFS、DFS 的原理，以及 双向广搜、A<em>算法、剪枝、迭代加深搜索、IDA</em>的经典例题，适合入门搜索算法。（第 4 章“搜</p>
+<p>索技术”电子版下载：https://github.com/luoyongjun999/code	其中的补充资料）</p>
+<p>本文将分几篇专题介绍搜索扩展内容、讲解更多习题，便于读者深入掌握搜索技术。</p>
+<p>第	1 篇，搜索基础。</p>
+<p>第	2 篇，剪枝。</p>
+<p>第	3 篇～第 5 篇，记忆化搜索、双向广搜、迭代加深、A*搜索等。 本文是第 1 篇。</p>
+<pre><code>        目录
+</code></pre>
+<p>1
+搜索简介&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;
+1</p>
+<p>2
+基本搜索算法&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+1</p>
+<p>3
+BFS 的性质和代码实现&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+2</p>
+<p>4
+DFS 的常见操作和代码实现&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;..
+4</p>
+<pre><code>4.1
+</code></pre>
+<p>DFS 的常见操作&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.
+4</p>
+<pre><code>4.2
+</code></pre>
+<p>DFS 代码框架&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;..
+9</p>
+<p>5
+BFS 和 DFS 的复杂度&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;..
+9</p>
+<p>6
+BFS 和 DFS 基本题目&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;
+10</p>
+<p>1 搜索简介</p>
+<p>搜索，就是查找解空间，它是“暴力法”算法思想的具体实现。</p>
+<p>暴力法（Brute force，又译为蛮力法）：把所有可能的情况都罗列出来，然后逐一检查， 从中找到答案。这种方法简单、直接，不玩花样，利用了计算机强大的计算能力。</p>
+<p>搜索是“通用”的方法。一个问题，如果比较难，那么先尝试一下搜索，或许能启发出更 好的算法。竞赛的时候，遇到不会的难题，如果有时间，就用搜索提交一下，说不定判题数据 很弱，就通过了。</p>
+<p>搜索的思路很简单，但是操作起来也并不容易。一般有以下操作： （1）找到所有可能的数据，并且用数据结构表示和存储。常用的搜索算法是 BFS 和 DFS。 （2）优化。尽量多地排除不符合条件的数据，以减少搜索的空间。 （3）用某个算法快速检索这些数据。</p>
+<p>2 搜索算法的基本思路</p>
+<p>1</p>
+<p>搜索的基本算法是：深度优先搜索（DFS, Depth-First Search）、宽度优先搜索（BFS, Breadth-First Search，或称为广度优先搜索）。</p>
+<p>这两个算法的思想，用老鼠走迷宫的例子来说明，又形象又透彻。 迷宫内部的路错综复杂，老鼠从入口进去后，怎么才能找到出口？有两种不同的方法： （1）一只老鼠走迷宫。它在每个路口，都选择先走右边（当然，选择先走左边也可以），</p>
+<p>能走多远就走多远；直到碰壁无法再继续往前走，然后往回退一步，这一次走左边，然后继续 往下走。用这个办法，能走遍所有的路，而且不会重复（回退不算重复走）。这个思路，就是</p>
+<p>DFS。</p>
+<p>（2）一群老鼠走迷宫。假设老鼠是无限多的，这群老鼠进去后，在每个路口，都派出部 分老鼠探索所有没走过的路。走某条路的老鼠，如果碰壁无法前行，就停下；如果到达的路口 已经有别的老鼠探索过了，也停下。很显然，所有的道路都会走到，而且不会重复。这个思路， 就是 BFS。BFS 看起来像“并行计算”，不过，由于程序是单机顺序运行的，所以，可以把 BFS 看成是并行计算的模拟。</p>
+<p>简洁地说：BFS 是“逐层扩散”，DFS 是“一路到底、逐层回退”。 下面用一棵二叉树为例子，演示 BFS 和 DFS 的访问顺序。</p>
+<p>图 1 一棵二叉树</p>
+<p>（1）BFS 的访问顺序是：{E B G A D F I C H}，即“第 1 层 E&ndash;第 2 层 BG&ndash;第 3 层 ADFI&ndash;第 4</p>
+<p>层 CH”。</p>
+<p>（2）DFS 的访问顺序，设先访问左节点，后访问右节点，那么访问顺序是：{E B A D C G F I H}。需要注意的是，访问顺序不是输出顺序。例如上面的二叉树，它的中序遍历、先序遍 历、后序遍历都不同，但是对节点的访问顺序是一样的（实际上就是先序遍历）。具体操作， 见下一节的代码。</p>
+<p>3 BFS 的性质和代码实现</p>
+<p>BFS 和 DFS 的实现：“BFS=队列”，“DFS=递归”。</p>
+<p>为什么“BFS=队列”呢？以老鼠走迷宫为例，从起点 s 开始，一层一层地扩散出去。处理 完离 s 近的第 i 层之后，再处理第 i+1 层。这一操作用队列最方便，处理第 i 层的节点 a 时，</p>
+<p>把	a 的第 i+1 层的邻居，放到队列尾部即可。 队列内的节点有 2 个特征：</p>
+<p>（1）处理完第 i 层后，才会处理第 i+1 层；</p>
+<p>（2）队列中最多有 2 层节点，其中第 i 层节点都在第 i+1 层前面。</p>
+<p>下面给出 BFS 遍历图 1 二叉树的代码。分别给出了静态版和指针版二叉树的代码，竞赛中 一般用静态版二叉树，不易出错。两个代码都使用 STL 的 queue 队列。</p>
+<p>两个代码的输出都是：E B G A D F I C H。 BFS（静态版二叉树）</p>
+<p>#include &lt;bits/stdc++.h&gt; using namespace std; const int maxn = 100005;</p>
+<p>2</p>
+<p>struct Node{	//静态二叉树</p>
+<p>char value;</p>
+<p>int lchild, rchild;</p>
+<p>}node[maxn];</p>
+<p>int index = 0;	//记录节点</p>
+<p>int newNode(char val){</p>
+<p>node[index].value = val;</p>
+<p>node[index].lchild = -1;	//-1 表示空</p>
+<p>node[index].rchild = -1;</p>
+<p>return index ++;</p>
+<p>}</p>
+<p>void insert(int &amp;father, int child, int l_r){	//插入孩子</p>
+<p>if(l_r == 0)	//左孩子</p>
+<p>node[father].lchild = child;</p>
+<p>else	//右孩子</p>
+<p>node[father].rchild = child;</p>
+<p>}</p>
+<p>int buildtree(){	//建一棵二叉树</p>
+<p>int A = newNode(&lsquo;A&rsquo;);int B = newNode(&lsquo;B&rsquo;);int C = newNode(&lsquo;C&rsquo;); int D = newNode(&lsquo;D&rsquo;);int E = newNode(&lsquo;E&rsquo;);int F = newNode(&lsquo;F&rsquo;); int G = newNode(&lsquo;G&rsquo;);int H = newNode(&lsquo;H&rsquo;);int I = newNode(&lsquo;I&rsquo;);</p>
+<p>insert(E,B,0);	insert(E,G,1);	//E 的左孩子是 B，右孩子是 G
+insert(B,A,0);	insert(B,D,1);
+insert(G,F,0);	insert(G,I,1);
+insert(D,C,0);	insert(I,H,0);
+int root = E;	
+return root;	
+}	
+int main(){	
+int root = buildtree();
+queue <!-- raw HTML omitted --> q;	
+q.push(root);		//从根节点开始
+while(q.size()){	
+int tmp = q.front();
+cout &laquo; node[tmp].value &laquo; &quot; &ldquo;;	//打印队头
+q.pop();		//去掉队头</p>
+<p>if(node[tmp].lchild != -1)	q.push(node[tmp].lchild);	//左孩子入队
+if(node[tmp].rchild != -1)	q.push(node[tmp].rchild);	//右孩子入队
+}	
+return 0;</p>
+<p>}</p>
+<p>作为对照，下面给出指针版二叉树代码。 BFS（指针版二叉树）</p>
+<p>#include &lt;bits/stdc++.h&gt;</p>
+<p>3</p>
+<p>using namespace std;</p>
+<p>struct node{	//指针二叉树</p>
+<p>char value;</p>
+<p>node *l, *r;</p>
+<p>node(char value = &lsquo;#', node *l = NULL, node *r = NULL):value(value), l(l), r(r){}</p>
+<p>};</p>
+<p>void remove_tree(node *root){ //释放空间 if(root == NULL) return; remove_tree(root-&gt;l);</p>
+<p>remove_tree(root-&gt;r); delete root;</p>
+<p>}		
+int main(){		
+node  *A,*B,*C,*D,*E,*F,*G,*H,*I;		//以下建一棵二叉树
+A = new node(&lsquo;A&rsquo;); B = new node(&lsquo;B&rsquo;); C =	new node(&lsquo;C&rsquo;);
+D = new node(&lsquo;D&rsquo;); E = new node(&lsquo;E&rsquo;); F =	new node(&lsquo;F&rsquo;);
+G = new node(&lsquo;G&rsquo;); H = new node(&lsquo;H&rsquo;); I =	new node(&lsquo;I&rsquo;);
+E-&gt;l = B; E-&gt;r = G;	B-&gt;l = A; B-&gt;r =	D;
+G-&gt;l = F; G-&gt;r = I;	D-&gt;l = C; I-&gt;l = H;	//以上建了一棵二叉树
+queue <!-- raw HTML omitted --> q;		
+q.push(<em>E);		
+while(q.size()){		
+node <em>tmp;		
+tmp = &amp;(q.front());		
+cout &laquo; tmp-&gt;value &laquo; &quot; &ldquo;;	//打印队头
+q.pop();		//去掉队头
+if(tmp-&gt;l) q.push(</em>(tmp-&gt;l));	//左孩子入队
+if(tmp-&gt;r) q.push(</em>(tmp-&gt;r));	//右孩子入队
+}</p>
+<p>remove_tree(E); return 0;</p>
+<p>}</p>
+<p>BFS 是逐层扩散的，非常符合在图上计算最短路径，先扩散到的节点，离根节点更近。很 多最短路径算法，都是在 BFS 上发展出来的。</p>
+<p>具体内容，请参考《算法竞赛入门到进阶》第 10 章图论。</p>
+<p>4 DFS 的常见操作和代码实现</p>
+<p>4.1 DFS 的常见操作</p>
+<p>DFS 的原理，就是递归的过程。</p>
+<p>DFS 的代码比 BFS 更简短一些。下面给出两个代码，分别基于指针版和静态版二叉树。它 们输出了图 1 二叉树的各种 DFS 操作，有时间戳、DFS 序、树深度、子树节点数，另外还给出 了二叉树的中序输出、先序输出、后序输出。</p>
+<p>DFS 访问节点，经常用到以下操作：</p>
+<p>4</p>
+<p>（1）节点第一次被访问的时间戳。用 dfn[i]表示节点 i 第一次被访问的时间戳，函数 dfn_order()打印出了时间戳：</p>
+<p>dfn[E]=1; dfn[B]=2; dfn[A]=3; dfn[D]=4; dfn[C]=5; dfn[G]=6; dfn[F]=7; dfn[I]=8; dfn[H]=9。</p>
+<p>时间戳就是先序输出。</p>
+<p>（2）DFS 序。在递归时，每个节点会来回访问 2 次，即第 1 次访问和第 2 次回溯。函数 visit_order()打印出了 DFS 序：</p>
+<p>{E B A A D C C D B G F F I H H I G E}</p>
+<p>这个序列有一个重要特征：每个节点出现 2 次，被这 2 次包围起来的，是以它为父节点的 一棵子树。例如序列中的{B A A D C C D B}，就是 B 为父节点的一棵子树，又例如{I H H I}， 是以 I 为父节点的一棵子树。这个特征是递归操作产生的。</p>
+<p>（3）树的深度。从根节点往子树 DFS，每个节点第一次被访问时，深度加 1，从这个节点 回溯时，深度减 1。用 deep[i]表示节点 i 的深度，函数 deep_node()打印出了深度：</p>
+<p>deep[E]=1; deep[B]=2; deep[A]=3; deep[D]=3; deep[C]=4; deep[G]=2; deep[F]=3; deep[I]=3; deep[H]=4。</p>
+<p>（4）子树节点总数。用 num[i]表示以 i 为父亲的子树上的节点总数，例如，以 B 为父节 点的子树，共有 4 个节点{A B C D}。只需要简单地 DFS 一次就能完成，每个节点的数量等于 它的 2 个子树的数量相加，再加 1，即加它自己。函数 num_node()做了计算并打印出了以每个 节点为父亲的子树上的节点数量。</p>
+<p>另外还有树的重心：在一棵中，找到一个节点，把树变为以该点为根的有根树，并且最大 子树的结点数最小。本文没有给出代码。</p>
+<p>竞赛中一般用静态版二叉树写代码。作为对照，后面也给出指针版二叉树的代码。 DFS（静态版二叉树）</p>
+<p>#include &lt;bits/stdc++.h&gt; using namespace std; const int maxn = 100005;</p>
+<p>struct Node{ char value;</p>
+<p>int lchild, rchild;</p>
+<p>}node[maxn];</p>
+<p>int index = 0;	//记录节点</p>
+<p>int newNode(char val){	//新建节点</p>
+<p>node[index].value = val;</p>
+<p>node[index].lchild = -1;	//-1 表示空</p>
+<p>node[index].rchild = -1;</p>
+<p>return index ++;</p>
+<p>}</p>
+<p>void insert(int &amp;father, int child, int l_r){	//插入孩子</p>
+<p>if(l_r == 0)	//左孩子</p>
+<p>node[father].lchild = child;</p>
+<p>else	//右孩子</p>
+<p>node[father].rchild = child;</p>
+<p>}</p>
+<p>int dfn[maxn] = {0};	//dfn[i]是节点 i 的时间戳</p>
+<p>5</p>
+<p>int dfn_timer = 0;</p>
+<p>void dfn_order (int father){ if(father != -1){</p>
+<p>dfn[father] = ++dfn_timer;</p>
+<p>printf(&ldquo;dfn[%c]=%d; &ldquo;, node[father].value, dfn[father]); //打印访问节点的时间戳</p>
+<p>dfn_order (node[father].lchild); dfn_order (node[father].rchild);</p>
+<p>}</p>
+<p>}</p>
+<p>int visit_timer = 0;</p>
+<p>void visit_order (int father){	//打印 DFS 序</p>
+<p>if(father != -1){</p>
+<p>printf(&ldquo;visit[%c]=%d; &ldquo;, node[father].value, ++visit_timer); //打印 DFS 序：第 1 次访问节点</p>
+<p>visit_order (node[father].lchild); visit_order (node[father].rchild);</p>
+<p>printf(&ldquo;visit[%c]=%d; &ldquo;, node[father].value, ++visit_timer);</p>
+<p>//打印 DFS 序：第 2 次回溯</p>
+<p>}</p>
+<p>}</p>
+<p>int deep[maxn] = {0};	//deep[i]是节点 i 的深度</p>
+<p>int deep_timer = 0;</p>
+<p>void deep_node (int father){</p>
+<p>if(father != -1){</p>
+<p>deep[father] = ++deep_timer;</p>
+<p>printf(&ldquo;deep[%c]=%d; &ldquo;,node[father].value,deep[father]);</p>
+<p>//打印树的深度，第一次访问时，深度+1</p>
+<p>deep_node (node[father].lchild);</p>
+<p>deep_node (node[father].rchild);</p>
+<p>deep_timer&ndash;;	//回溯时，深度-1</p>
+<p>}</p>
+<p>}</p>
+<p>int num[maxn] = {0}; //num[i]是以 i 为父亲的子树上的节点总数 int num_node (int father){</p>
+<p>if(father == -1) return 0; else{</p>
+<p>num[father] = num_node (node[father].lchild) + num_node (node[father].rchild) + 1;</p>
+<p>printf(&ldquo;num[%c]=%d; &ldquo;, node[father].value, num[father]); //打印数量 return num[father];</p>
+<p>}</p>
+<p>}</p>
+<p>void preorder (int father){	//求先序序列</p>
+<p>if(father != -1){</p>
+<p>cout &laquo; node[father].value &laquo;&rdquo; &ldquo;;	//先序输出</p>
+<p>6</p>
+<p>preorder (node[father].lchild);</p>
+<p>preorder (node[father].rchild);</p>
+<p>}</p>
+<p>}</p>
+<p>void inorder (int father){	//求中序序列</p>
+<p>if(father != -1){</p>
+<p>inorder (node[father].lchild);;</p>
+<p>cout &laquo; node[father].value &laquo;&rdquo; &ldquo;;	//中序输出</p>
+<p>inorder (node[father].rchild);</p>
+<p>}</p>
+<p>}</p>
+<p>void postorder (int father){	//求后序序列</p>
+<p>if(father != -1){</p>
+<p>postorder (node[father].lchild);;</p>
+<p>postorder (node[father].rchild);</p>
+<p>cout &laquo; node[father].value &laquo;&rdquo; &ldquo;;	//后序输出</p>
+<p>}</p>
+<p>}</p>
+<p>int buildtree(){	//建一棵树</p>
+<p>int A = newNode(&lsquo;A&rsquo;);int B = newNode(&lsquo;B&rsquo;);int C = newNode(&lsquo;C&rsquo;); int D = newNode(&lsquo;D&rsquo;);int E = newNode(&lsquo;E&rsquo;);int F = newNode(&lsquo;F&rsquo;); int G = newNode(&lsquo;G&rsquo;);int H = newNode(&lsquo;H&rsquo;);int I = newNode(&lsquo;I&rsquo;);</p>
+<p>insert(E,B,0);	insert(E,G,1);	//E 的左孩子是 B，右孩子是 G
+insert(B,A,0);	insert(B,D,1);	
+insert(G,F,0);	insert(G,I,1);	
+insert(D,C,0);	insert(I,H,0);	
+int root = E;				
+return root;				
+}				
+int main(){				
+int root = buildtree();		
+cout &laquo;&quot;dfn order: &ldquo;;	dfn_order(root); cout &laquo;endl;	//打印时间戳
+cout &laquo;&quot;visit order: &ldquo;; visit_order(root); cout &laquo;endl;	//打印 DFS 序
+cout &laquo;&quot;deep order: &ldquo;;	deep_node(root); cout &laquo;endl;	//打印节点深度
+cout &laquo;&quot;num of tree: &ldquo;;	num_node(root); cout &laquo;endl;	//打印子树上的节点数
+cout &laquo;&quot;in order:	&ldquo;;	inorder(root); cout &laquo; endl;	//打印中序序列
+cout &laquo;&quot;pre order:	&ldquo;;	preorder(root); cout &laquo; endl;	//打印先序序列
+cout &laquo;&quot;post order: &ldquo;;	postorder(root); cout &laquo; endl;	//打印后序序列
+return 0;</p>
+<p>}</p>
+<p>/*输出是：</p>
+<p>dfn order: dfn[E]=1; dfn[B]=2; dfn[A]=3; dfn[D]=4; dfn[C]=5; dfn[G]=6; dfn[F]=7; dfn[I]=8; dfn[H]=9;</p>
+<p>visit order: visit[E]=1; visit[B]=2; visit[A]=3; visit[A]=4; visit[D]=5; visit[C]=6; visit[C]=7; visit[D]=8; visit[B]=9; visit[G]=10; visit[F]=11; visit[F]=12; visit[I]=13; visit[H]=14; visit[H]=15; visit[I]=16; visit[G]=17; visit[E]=18;</p>
+<p>7</p>
+<p>deep order: deep[E]=1; deep[B]=2; deep[A]=3; deep[D]=3; deep[C]=4; deep[G]=2; deep[F]=3; deep[I]=3; deep[H]=4;</p>
+<p>num of tree: num[A]=1; num[C]=1; num[D]=2; num[B]=4; num[F]=1; num[H]=1; num[I]=2; num[G]=4; num[E]=9;</p>
+<p>in order: A B C D E F G H I pre order: E B A D C G F I H post order: A C D B F H I G E */</p>
+<p>DFS（指针版二叉树）</p>
+<p>#include &lt;bits/stdc++.h&gt; using namespace std;</p>
+<p>struct node{ char value; node *l, *r;</p>
+<p>node(char value = &lsquo;#', node *l = NULL, node *r = NULL):value(value), l(l), r(r){}</p>
+<p>};</p>
+<p>void preorder (node *root){	//求先序序列</p>
+<p>if(root != NULL){</p>
+<p>cout &laquo; root-&gt;value &laquo;&rdquo; &ldquo;;	//先序输出</p>
+<p>preorder (root -&gt;l);</p>
+<p>preorder (root -&gt;r);</p>
+<p>}</p>
+<p>}</p>
+<p>void inorder (node *root){	//求中序序列</p>
+<p>if(root != NULL){</p>
+<p>inorder (root -&gt;l);</p>
+<p>cout &laquo; root-&gt;value &laquo;&rdquo; &ldquo;;	//中序输出</p>
+<p>inorder (root -&gt;r);</p>
+<p>}</p>
+<p>}</p>
+<p>void postorder (node *root){	//求后序序列</p>
+<p>if(root != NULL){</p>
+<p>postorder (root -&gt;l);</p>
+<p>postorder (root -&gt;r);</p>
+<p>cout &laquo; root-&gt;value &laquo;&rdquo; &ldquo;;	//后序输出</p>
+<p>}</p>
+<p>}</p>
+<p>void remove_tree(node *root){	//释放空间</p>
+<p>if(root == NULL) return;</p>
+<p>remove_tree(root-&gt;l);</p>
+<p>remove_tree(root-&gt;r);</p>
+<p>delete root;</p>
+<p>}</p>
+<p>8</p>
+<p>int main(){</p>
+<p>node  *A, *B,*C,*D,*E,*F,*G,*H,*I;	
+A = new node(&lsquo;A&rsquo;); B = new node(&lsquo;B&rsquo;); C = new node(&lsquo;C&rsquo;);
+D = new node(&lsquo;D&rsquo;); E = new node(&lsquo;E&rsquo;); F = new node(&lsquo;F&rsquo;);
+G = new node(&lsquo;G&rsquo;); H = new node(&lsquo;H&rsquo;); I = new node(&lsquo;I&rsquo;);
+E-&gt;l = B; E-&gt;r = G;		B-&gt;l = A; B-&gt;r = D;
+G-&gt;l = F; G-&gt;r = I;		D-&gt;l = C;	I-&gt;l = H;
+cout &laquo;&quot;in order:	&ldquo;;	inorder(E); cout &laquo; endl;	//打印中序序列
+cout &laquo;&quot;pre order:	&ldquo;;	preorder(E); cout &laquo; endl;	//打印先序序列
+cout &laquo;&quot;post order: &ldquo;;	postorder(E); cout &laquo; endl;	//打印后序序列
+remove_tree(E);			
+return 0;			
+}</p>
+<p>DFS 是一直深入的，适合处理节点间的先后关系、连通性等，在图论中应用很广泛。 具体内容，请参考《算法竞赛入门到进阶》第 10 章图论。</p>
+<p>4.2 DFS 代码框架</p>
+<p>DFS 的代码看起来比较简单，但是逻辑上难以理解，不容易编码。</p>
+<p>下面给出 DFS 的框架。在后面“剪枝”这一节的例题“hdu 1010 Tempter of the Bone”，</p>
+<p>是非常符合这个框架的示例，请仔细分析例题代码。 读者在大量编码的基础上，再回头体会这个框架的作用。
+ans;	//答案，用全局变量表示
+void dfs(层数，其他参数){	
+if (出局判断){	//到达最底层，或者满足条件退出
+更新答案;	//答案一般用全局变量表示
+return;	//返回到上一层
+}		
+(剪枝)	//在进一步 DFS 之前剪枝
+for (枚举下一层可能的情况)	//对每一个情况继续 DFS
+if (used[i] == 0) {		//如果状态 i 没有用过，就可以进入下一层
+used[i] = 1;	//标记状态 i,表示已经用过，在更底层不能再使用
+dfs(层数+1，其他参数);	//下一层
+used[i] = 0;	//恢复状态，回溯时，不影响上一层对这个状态的使用
+}		
+return;	//返回到上一层
+}</p>
+<p>5 BFS 和 DFS 的复杂度</p>
+<p>以图为例，图中的所有 n 个点和所有 m 条边都应该至少访问一次，所以复杂度至少是 O(n+m) 的。很多情况下，点和边会计算多次。例如计算图上两个点之间的最短路径，一条路径包含很 多点和边，一个点或一个边可能属于不同的路径，需要计算多次，复杂度就会超过 O(n+m)。</p>
+<p>在 BFS 和 DFS 基础上，发展出了剪枝、记忆化（DFS）、双向广搜（BFS）、迭代加深搜索 （DFS）、A*（BFS）等技术，大大增强了搜索的能力。</p>
+<p>DFS 的代码比 BFS 更简单，如果一个问题用 BFS 和 DFS 都行，一般用 DFS。</p>
+<p>9</p>
+<p>6 BFS 和 DFS 基本题目</p>
+<p>在《算法入门到进阶》第 4 章中，讲解了一些经典题目：排列问题、子集生成和组合问题、 八数码问题、八皇后问题、埃及分数等。</p>
+<p>本文后续将深入讲解一些例题。 基本的搜索题练习，请参考：</p>
+<p>力扣的 DFS 题：https://leetcode-cn.com/tag/depth-first-search/ 力扣的 BFS 题：https://leetcode-cn.com/tag/breadth-first-search/ 洛谷训练场的 BFS 和 DFS：https://www.luogu.com.cn/training/mainpage</p>
+<p>竞赛队员掌握基本搜索的编码能力，重要性是毋庸置疑的，参赛得奖就有保障了。 初学者应该大量做搜索题，达到心手合一的境界，“唯手熟尔”!</p>
+
+
+    </main>
+  </div>
+  <footer>
+    <div class="footer-wrapper">
+      <p>Made with ❤️ &mdash; Powered by <a href="https://gohugo.io/" target="_blank" rel="external">Hugo</a> and the <a href="https://github.com/bjacquemet/personal-web" target='_blank' rel="external">Personal Web</a> theme. Icons come from the great <a href="https://fontawesome.com/license" target="_blank" rel="external">Font Awesome</a> library</p>
+      <p></p>
+    </div>
+  </footer>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:500,600|Raleway:400,400i,600" rel="stylesheet">
+  
+</body>
+</html>

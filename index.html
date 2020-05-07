@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang='en'><head>
+  <title> - My New Hugo Site</title>
+  <link rel='canonical' href='https://alex-sx.github.io/' />
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta name='description' content='' />
+  <meta name='theme-color' content='black' />
+  
+
+  <meta name="generator" content="Hugo 0.70.0" />
+
+  
+
+
+
+
+
+<link rel="stylesheet" href="https://alex-sx.github.io/sass/style.min.8a1658d134a4b54730b66789206b2cf14c1b006a6de3f3fde6302f925b6e01f5.css" integrity="sha256-ihZY0TSktUcwtmeJIGss8UwbAGpt4/P95jAvkltuAfU=" media="screen">
+<link rel="stylesheet" href="https://alex-sx.github.io/syntax.min.css" integrity="" media="screen">
+
+  <meta property="og:title" content="My New Hugo Site" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://alex-sx.github.io/" />
+<meta property="og:updated_time" content="2020-05-07T10:06:16+08:00" />
+
+  <meta itemprop="name" content="My New Hugo Site">
+<meta itemprop="description" content="">
+</head>
+<body>
+
+  <header style="background-image:linear-gradient(
+      rgba(0,0,0,0.4),rgba(0,0,0,0.4)
+    ),url(&#39;https://alex-sx.github.io/images/default-sidebar.jpg&#39;)">
+
+  <div class="intro">
+    <div class="logo-container">
+      <a href="/">
+        <img src='https://alex-sx.github.io/images/edna-west.jpg' alt="Profile Tags" class="rounded-logo">
+      </a>
+    </div>
+    <h2>Welcome, I'm John Doe</h2>
+    <h3>This is my personal website</h3>
+    <div class="menu">
+      
+
+      
+    </div>
+
+  </div>
+
+  <div class="socials">
+      
+  </div>
+
+</header>
+
+  <div class="content-wrapper">
+    
+    <main id="content" class="">
+
+<h1>My New Hugo Site</h1>
+
+
+<h2>My Latest Job</h2>
+  
+  
+    
+      <div class="post-container">
+  <h2>
+    <a href="https://alex-sx.github.io/post/blog/">搜索基础</a>
+  </h2>
+  <p>算法竞赛专题解析&ndash;
+搜索进阶(1)&ndash;搜索基础
+罗勇军 2020.3.2
+本系列是这本书的扩展资料：《算法竞赛入门到进阶》（京东，当当）.罗勇军、郭卫斌. 清华大学出版社 本文 web 地址：https://blog.csdn.net/weixin_43914593
+PDF 下载地址：https://github.com/luoyongjun999/code 其中的补充资料 如有建议，请联系：（1）QQ 群，567554289；（2）作者 QQ，15512356
+《算法竞赛入门到进阶》的第 4 章“搜索技术”，讲解了递归、BFS、DFS 的原理，以及 双向广搜、A算法、剪枝、迭代加深搜索、IDA的经典例题，适合入门搜索算法。（第 4 章“搜
+索技术”电子版下载：https://github.com/luoyongjun999/code	其中的补充资料）
+本文将分几篇专题介绍搜索扩展内容、讲解更多习题，便于读者深入掌握搜索技术。
+第	1 篇，搜索基础。
+第	2 篇，剪枝。
+第	3 篇～第 5 篇，记忆化搜索、双向广搜、迭代加深、A*搜索等。 本文是第 1 篇。
+ 目录  1 搜索简介&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip; 1
+2 基本搜索算法&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 1
+3 BFS 的性质和代码实现&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 2
+4 DFS 的常见操作和代码实现&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.. 4
+4.1  DFS 的常见操作&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;. 4
+4.2  DFS 代码框架&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.. 9
+5 BFS 和 DFS 的复杂度&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+  <div class="read-more">
+    <a alt="搜索基础" href="https://alex-sx.github.io/post/blog/" /><div class="icon">
+  <svg width="18px" height="18px" viewBox="0 0 115 115" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img">
+  
+  <path d="M0 28.818v80.232h44.086c5.2-.045 9.824 1.027 12.077 4.388V34.334c-2.18-3.675-6.792-5.516-12.077-5.516H0zm70.914 0c-5.285 0-9.896 1.841-12.077 5.516v79.104c2.253-3.36 6.876-4.388 12.077-4.388H115V28.818H70.914zM12.034 42.19h33.431a2.674 2.674 0 1 1 0 5.349h-33.43a2.674 2.674 0 0 1 0-5.35zm57.5 0h33.431a2.674 2.674 0 0 1 0 5.349h-33.43a2.674 2.674 0 1 1 0-5.35zm-57.5 12.035h33.431a2.674 2.674 0 1 1 0 5.349h-33.43a2.674 2.674 0 0 1 0-5.35zm57.5 0h33.431a2.674 2.674 0 0 1 0 5.349h-33.43a2.674 2.674 0 1 1 0-5.35zm-57.5 12.035h33.431a2.674 2.674 0 1 1 0 5.348h-33.43a2.674 2.674 0 0 1 0-5.348zm57.5 0h33.431a2.674 2.674 0 0 1 0 5.348h-33.43a2.674 2.674 0 1 1 0-5.348zm-57.5 12.034h33.431a2.674 2.674 0 1 1 0 5.35h-33.43a2.674 2.674 0 0 1 0-5.35zm57.5 0h33.431a2.674 2.674 0 0 1 0 5.35h-33.43a2.674 2.674 0 1 1 0-5.35zm-57.5 12.035h33.431a2.674 2.674 0 1 1 0 5.35h-33.43a2.674 2.674 0 0 1 0-5.35zm57.5 0h33.431a2.674 2.674 0 0 1 0 5.35h-33.43a2.674 2.674 0 1 1 0-5.35z"/>
+  
+  </svg>
+</div>
+
+    Read more</a>
+  </div>
+</div>
+    
+  
+
+    </main>
+  </div>
+  <footer>
+    <div class="footer-wrapper">
+      <p>Made with ❤️ &mdash; Powered by <a href="https://gohugo.io/" target="_blank" rel="external">Hugo</a> and the <a href="https://github.com/bjacquemet/personal-web" target='_blank' rel="external">Personal Web</a> theme. Icons come from the great <a href="https://fontawesome.com/license" target="_blank" rel="external">Font Awesome</a> library</p>
+      <p></p>
+    </div>
+  </footer>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:500,600|Raleway:400,400i,600" rel="stylesheet">
+  
+</body>
+</html>
